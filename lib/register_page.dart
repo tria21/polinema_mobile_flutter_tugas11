@@ -1,21 +1,19 @@
-import 'package:tugas11/auth.dart';
-import 'package:tugas11/profil_page.dart';
-import 'package:tugas11/register_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:tugas11/auth.dart';
+import 'package:tugas11/login_page.dart';
+import 'package:tugas11/profil_page.dart';
 import 'package:flutter/material.dart';
-import 'package:tugas11/sign_in.dart';
-import 'package:tugas11/first_screen.dart';
 
-class LoginPage extends StatefulWidget {
+class RegisterPage extends StatefulWidget {
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _RegisterPageState createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>(); //membuat key
   TextEditingController emailController = TextEditingController(); //membuat controller
   TextEditingController passwordController = TextEditingController();
-  var authHandler = new Auth(); //membuat authHandler
+  var authHandler = new Auth(); //membuat auth handler
 
   @override
   Widget build(BuildContext context) {
@@ -28,10 +26,8 @@ class _LoginPageState extends State<LoginPage> {
               SliverList(
                 delegate: SliverChildListDelegate([
                   _showTitle(),
-                  _formLogin(),
-                  _loginButton(),
-                  _textOr(),
-                  _signInButton(),
+                  _formRegister(),
+                  _registerButton(),
                 ]),
               ),
               SliverFillRemaining(
@@ -43,17 +39,17 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       Text(
-                        "Don’t have account ?",
+                        "Already have account ?",
                       ),
                       GestureDetector(
                         onTap: () {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => RegisterPage()));
+                                  builder: (context) => LoginPage()));
                         },
                         child: Text(
-                          "Register here",
+                          "Login here",
                           style: TextStyle(fontWeight: FontWeight.w700),
                         ),
                       ),
@@ -86,7 +82,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               SizedBox(width: 16),
               Expanded(
-                child: Divider( //membuat garis
+                child: Divider(
                   thickness: 3,
                   // color: Colors.white,
                 ),
@@ -96,7 +92,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
           // Tulisan Welcome back
           Text(
-            "Welcome back",
+            "Register First",
             style: TextStyle(
                 fontWeight: FontWeight.w300, fontSize: 36, letterSpacing: 5),
           ),
@@ -105,14 +101,14 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-//membuat form untuk login
-  Widget _formLogin() {
+//membuat form registrasi
+  Widget _formRegister() {
     return Form(
       key: _formKey,
       child: Column(children: <Widget>[
         Padding(
           padding: EdgeInsets.only(top: 20),
-          //membuuat form email
+          //form email
           child: TextFormField(
             controller: emailController,
             decoration: InputDecoration(
@@ -121,11 +117,11 @@ class _LoginPageState extends State<LoginPage> {
                 borderRadius: BorderRadius.circular(10.0),
               ),
             ),
-            validator: (value) { //kondisi ketika memasukkan email
-              if (value.isEmpty) {
+            validator: (value) {
+              if (value.isEmpty) { //kondisi untuk inputan email
                 return 'Enter an Email Address';
               } else if (!value.contains('@')) {
-                return 'Please enter a valid email address'; //email harus menggunakan @
+                return 'Please enter a valid email address';
               }
               return null;
             },
@@ -133,9 +129,9 @@ class _LoginPageState extends State<LoginPage> {
         ),
         Padding(
           padding: EdgeInsets.only(top: 20),
-          //membuat form password
+          //form password
           child: TextFormField(
-            obscureText: true,
+            obscureText: true, //teks disembunyikan
             controller: passwordController,
             decoration: InputDecoration(
               labelText: "Enter Password",
@@ -145,10 +141,10 @@ class _LoginPageState extends State<LoginPage> {
             ),
             // The validator receives the text that the user has entered.
             validator: (value) {
-              if (value.isEmpty) { //kondisi ketika input password
+              if (value.isEmpty) { //kondisi inputan password
                 return 'Enter Password';
               } else if (value.length < 6) {
-                return 'Password must be atleast 6 characters!'; //password min 6 karakter
+                return 'Password must be atleast 6 characters!'; //password min 6 char
               }
               return null;
             },
@@ -158,7 +154,6 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-//memastikan inputan email
   Widget _showEmailInput() {
     return Padding(
       padding: EdgeInsets.only(top: 60),
@@ -177,7 +172,6 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-//memastikan inputan password
   Widget _showPasswordInput() {
     return Padding(
       padding: EdgeInsets.only(top: 30),
@@ -197,22 +191,22 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-//membuat button untuk login
-  Widget _loginButton() {
+//membuat register button
+  Widget _registerButton() {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 30),
       width: double.infinity,
       child: RaisedButton(
         onPressed: () {
-          authHandler //auth pada auth.dart
-              .handleSignInEmail(emailController.text, passwordController.text)
+          authHandler
+              .handleSignUp(emailController.text, passwordController.text) //auth handler pada auth.dart
               .then((User user) {
             Navigator.push(context,
                 new MaterialPageRoute(builder: (context) => new EmailPage()));
           }).catchError((e) => print(e));
         },
         child: Text(
-          "Login",
+          "Register",
           style: TextStyle(fontSize: 15, color: Colors.white),
         ),
         shape: RoundedRectangleBorder(
@@ -221,78 +215,6 @@ class _LoginPageState extends State<LoginPage> {
         color: Color(0xff607Cbf),
         elevation: 0,
         padding: EdgeInsets.symmetric(vertical: 16),
-      ),
-    );
-  }
-
-//menampilkan teks or
-  Widget _textOr() {
-    return Row(
-      children: <Widget>[
-        Expanded(
-          child: Divider(
-            thickness: 1,
-          ),
-        ),
-        SizedBox(width: 20),
-        Text(
-          "OR",
-          // style: TextStyle(color: Colors.white),
-        ),
-        SizedBox(width: 20),
-        Expanded(
-          child: Divider( //menampilkan garis
-            thickness: 1,
-          ),
-        ),
-      ],
-    );
-  }
-
-//membuat button sign in
-  Widget _signInButton() {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 30),
-      child: OutlineButton(
-        splashColor: Colors.grey,
-        onPressed: () {
-          signInWithGoogle().then((result) { //auth pada sign_in.dart
-            if (result != null) {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return FirstScreen();
-                  },
-                ),
-              );
-            }
-          });
-        },
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        highlightElevation: 0,
-        borderSide: BorderSide(color: Colors.grey),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(0, 16, 0, 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Image(
-                  image: NetworkImage( //menampilkan gambar google
-                      'https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/1200px-Google_%22G%22_Logo.svg.png'),
-                  height: 20.0),
-              Padding(
-                padding: const EdgeInsets.only(left: 10),
-                child: Text(
-                  'Sign in with Google',
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: Colors.grey,
-                  ),
-                ),
-              )
-            ],
-          ),
-        ),
       ),
     );
   }

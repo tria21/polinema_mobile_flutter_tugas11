@@ -43,6 +43,34 @@ Future<String> signInWithGoogle() async {
   return null;
 }
 
+//membuat method signInWithEmailAndPassword
+Future<String> signInWithEmailAndPassword(String email, String password) async {
+  await Firebase.initializeApp();
+
+  UserCredential userAuth = (await _auth.signInWithEmailAndPassword(email: email, password: password));
+  User user = userAuth.user;
+
+  if(user != null) {
+    //checking if email and name is null
+    assert(user.email != null);
+
+    name = user.email;
+    email = user.email;
+    imageUrl = user.email;
+    //Only taking the first part of the name, i.e., First Name
+    if(name.contains(" ")) {
+      name = name.substring(0, name.indexOf("@"));
+    }
+    assert(!user.isAnonymous);
+    assert(await user.getIdToken() != null);
+    final User currentUser = _auth.currentUser;
+    assert(user.uid == currentUser.uid);
+    print('signInWithEmail succeeded: $user');
+    return '$user';
+  }
+  return null;
+}
+
 Future<void> signOutGoogle() async {
   await googleSignIn.signOut();
   print("User Signed Out");

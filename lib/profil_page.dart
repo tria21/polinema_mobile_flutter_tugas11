@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:tugas11/login_page.dart';
 import 'package:tugas11/sign_in.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class FirstScreen extends StatelessWidget {
+class EmailPage extends StatelessWidget {
+  final FirebaseAuth auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,51 +21,22 @@ class FirstScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
-              CircleAvatar( //menampilkan foto dari akun google
-                backgroundImage: NetworkImage(
-                  imageUrl,
-                ),
-                radius: 60,
-                backgroundColor: Colors.transparent,
-              ),
-              SizedBox(height: 40),
               Text(
-                'NAME',
+                'You have successfully logged in!',
                 style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
                     color: Colors.black54),
               ),
-              Text( //menampilkan nama dari akun email
-                name,
-                style: TextStyle(
-                    fontSize: 25,
-                    color: Colors.deepPurple,
-                    fontWeight: FontWeight.bold),
-              ),
+              Text(auth.currentUser.email), //digunakan untuk menampilkan email
               SizedBox(height: 20),
-              Text(
-                'EMAIL',
-                style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black54),
-              ),
-              Text(
-                email, //menampilkan email
-                style: TextStyle(
-                    fontSize: 25,
-                    color: Colors.deepPurple,
-                    fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 40),
               RaisedButton(
                 onPressed: () {
                   if(imageUrl!=null) {
                     signOutGoogle();
                   } else {
                     Navigator.of(context).pop();
-                  }
+                  } 
 
                   Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(builder: (context) {
